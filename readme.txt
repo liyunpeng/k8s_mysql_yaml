@@ -159,3 +159,26 @@ drwxr-xr-x 26 root     root       4096 Dec 17 22:10 ../
 drwx------  2 logstash docker     4096 Dec 19 22:09 mysql/
 drwx------  2 logstash docker     4096 Dec 19 22:09 performance_schema/
 
+
+重启k8s master所在的主机后， k8s 集群正常运行， 虽然只有master自己， 而且mysql服务在主机重启前创建的test数据库还在， 证明数据落盘有效和数据加载有效。 
+master@etcd0:~$ kubectl get node
+NAME         STATUS     ROLES    AGE   VERSION
+etcd0        Ready      master   24h   v1.15.2
+ubuntunode   NotReady   <none>   24h   v1.15.2   节点所在主机没有开机
+master@etcd0:~$ kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysql -ppassword
+If you don't see a command prompt, try pressing enter.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| test               |
++--------------------+
+4 rows in set (0.03 sec)
+
+mysql>
+
+
